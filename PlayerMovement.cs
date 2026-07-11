@@ -2,52 +2,49 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField]
-    float speed = 10f;
-    [SerializeField]
-    float rotationSpeed = 100f;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public float moveSpeed = 5f;
+    public float rotationSpeed = 200f;
+
+    private Rigidbody2D rb;
+
     void Start()
     {
-        
+        rb = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        //Rotation Code
-        if (Input.GetKey(KeyCode.RightArrow))
-            transform.Rotate(0, 0, -rotationSpeed * Time.deltaTime);
-        if(Input.GetKey(KeyCode.LeftArrow))
-            transform.Rotate(0, 0, rotationSpeed * Time.deltaTime);
+        // Rotation
+        if (Input.GetKey(KeyCode.LeftArrow)) { 
+            rotationSpeed = 200f;
+            rb.rotation += rotationSpeed * Time.deltaTime;
+        }
 
-        //Moving code
+        if (Input.GetKey(KeyCode.RightArrow))
+        {
+            rotationSpeed = 200;
+            rb.rotation -= rotationSpeed * Time.deltaTime;
+        }
+
+        else
+            rotationSpeed = 0;
+
+        // Forward movement
         if (Input.GetKey(KeyCode.UpArrow))
         {
-            if (Input.GetKey(KeyCode.Space))
-            {
-                speed = 5f;
-            }
-            else
-            {
-                speed = 10f;
-            }
-            transform.position += transform.up * speed * Time.deltaTime;
+            rb.linearVelocity = transform.up * moveSpeed;
+            if (Input.GetKey(KeyCode.Space)) // brake
+                rb.linearVelocity = transform.up * (moveSpeed / 2f);
         }
-        if (Input.GetKey(KeyCode.DownArrow))
+        else if (Input.GetKey(KeyCode.DownArrow))
         {
-            if (Input.GetKey(KeyCode.Space))
-            {
-                speed = 5f;
-            }
-            else
-            {
-                speed = 10f;
-            }
-            transform.position += transform.up * -speed * Time.deltaTime;
+            rb.linearVelocity = transform.up * -moveSpeed;
+            if (Input.GetKey(KeyCode.Space)) // brake
+                rb.linearVelocity = transform.up * (-moveSpeed / 2f);
         }
-
-        //Reducing speed with space
-        
+        else
+        {
+            rb.linearVelocity = Vector2.zero; // stop when no key pressed
+        }
     }
 }
