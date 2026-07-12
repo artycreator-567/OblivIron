@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class DeletingScript : MonoBehaviour
 {
+    public GameObject flashPrefab;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -15,7 +16,22 @@ public class DeletingScript : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Destroy(gameObject);
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            Debug.Log("Bullet hit enemy!");
+            Instantiate(flashPrefab, collision.transform.position, Quaternion.identity);
+
+            // Destroy the enemy
+            Destroy(collision.gameObject);
+
+            // Destroy the bullet itself
+            Destroy(gameObject);
+        }
+
+        if (collision.gameObject.CompareTag("Background"))
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void OnBecameInvisible()

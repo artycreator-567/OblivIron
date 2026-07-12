@@ -2,47 +2,45 @@ using UnityEngine;
 
 public class BallScript : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    [SerializeField]
-    public Transform target = null;
-    public bool shot = false;
-    public float bulletSpeed = 15.0f;
-    [SerializeField]
-    public GameObject Circle;
-    void Start()
-    {
-        GetComponent<Rigidbody2D>();
-    }
+    public GameObject missilePrefab; // drag your prefab here
+    public Transform firePoint;      // empty GameObject where missile spawns
+    public float baseSpeed = 10f;
+    public float maxSpeed = 30f;
 
-    // Update is called once per frame
+    private float chargeTimer = 0f;
+
     void Update()
     {
-        if (shot != true)
-        {
-            transform.position = target.position;
-            transform.rotation = target.rotation;
-        }
-
+        // Hold Space to charge
         if (Input.GetKey(KeyCode.Space))
         {
-            bulletSpeed += (Time.deltaTime*5);
+            chargeTimer += Time.deltaTime;
         }
 
+        // Release Space to fire
         if (Input.GetKeyUp(KeyCode.Space))
         {
-            shot = true;
-            GameObject missileClone = Instantiate(
-                Circle,
-                target.position,
-                target.rotation
-            );
-        }
+            // Create a clone at firePoint’s position and rotation
+            GameObject missileClone = Instantiate(missilePrefab, firePoint.position, (firePoint.rotation));
+            Rigidbody2D rb = missileClone.GetComponent<Rigidbody2D>();
+            rb.linearVelocity = firePoint.up * 20f;
 
-        if (shot == true)
-        {
-            Rigidbody2D rb = Circle.GetComponent<Rigidbody2D>();
-            rb.linearVelocity = target.up * bulletSpeed;
+            // Reset charge
+            chargeTimer = 0f;
         }
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Background"))
+        {
+            Destroy(gameObject); // delete this missile clone
+        }
+    }
+
+    void OnBecameInvisible()
+    {
+        Destroy(gameObject); // delete when off screen
     }
 
 }
