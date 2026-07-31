@@ -3,7 +3,8 @@ using System.Collections;
 
 public class FlashEffect : MonoBehaviour
 {
-    public float fadeDuration = 0.1f; // how long to fade out
+    [SerializeField]
+    public float fadeDuration = 0.025f; // how long to fade out
 
     private SpriteRenderer sr;
     private Color originalColor;

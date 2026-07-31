@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BallScript : MonoBehaviour
@@ -7,14 +8,15 @@ public class BallScript : MonoBehaviour
     public float baseSpeed = 10f;
     public float maxSpeed = 30f;
 
-    private float chargeTimer = 0f;
 
     void Update()
     {
         // Hold Space to charge
         if (Input.GetKey(KeyCode.Space))
         {
-            chargeTimer += Time.deltaTime;
+            baseSpeed += Time.deltaTime;
+            if (baseSpeed == maxSpeed)
+                baseSpeed = maxSpeed;
         }
 
         // Release Space to fire
@@ -23,10 +25,10 @@ public class BallScript : MonoBehaviour
             // Create a clone at firePoint’s position and rotation
             GameObject missileClone = Instantiate(missilePrefab, firePoint.position, (firePoint.rotation));
             Rigidbody2D rb = missileClone.GetComponent<Rigidbody2D>();
-            rb.linearVelocity = firePoint.up * 20f;
+            rb.linearVelocity = firePoint.up * baseSpeed;
 
             // Reset charge
-            chargeTimer = 0f;
+            baseSpeed = 10f;
         }
     }
 
